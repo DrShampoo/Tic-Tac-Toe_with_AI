@@ -7,14 +7,12 @@ import java.util.Scanner;
 public class PlayGame {
     Field field;
     CheckGame checkGame;
-    ComputerPlayer player;
-    List<String> commands = Arrays.asList("user", "easy", "medium");
+    List<String> commands = Arrays.asList("user", "easy", "medium", "hard");
 
 
-    public PlayGame(Field field, CheckGame checkGame, ComputerPlayer player) {
+    public PlayGame(Field field, CheckGame checkGame) {
         this.field = field;
         this.checkGame = checkGame;
-        this.player = player;
     }
 
     public void playUserVsUser (Scanner scanner) {
@@ -30,45 +28,49 @@ public class PlayGame {
 
     public void playUserVsComp (String player1, String player2, Scanner scanner) {
         field.drawMatrix();
-        String letterUs = "O";
-        String letterComp = "X";
+        ComputerPlayer computerPlayer;
+
         if (player1.equals("user")) {
-            letterUs = "X";
-            letterComp = "O";
-        }
-        while (checkGame.gameNotFinish) {
-            if (player1.equals("user")) {
-                field.playUser(scanner, letterUs);
+            computerPlayer = chooseDifficultyComputer(player2);
+            while (checkGame.gameNotFinish) {
+                field.playUser(scanner, "X");
                 checkGame.stateGame();
-                if (checkGame.gameNotFinish) player.play(letterComp, letterUs, player2);
-            } else {
-                player.play(letterComp, letterUs, player1);
+                if (checkGame.gameNotFinish) computerPlayer.play("O", "X");
                 checkGame.stateGame();
-                if (checkGame.gameNotFinish) field.playUser(scanner, letterUs);
             }
-            checkGame.stateGame();
+        } else {
+            computerPlayer = chooseDifficultyComputer(player1);
+            while (checkGame.gameNotFinish) {
+                computerPlayer.play("X", "O");
+                checkGame.stateGame();
+                if (checkGame.gameNotFinish) field.playUser(scanner, "O");
+                checkGame.stateGame();
+            }
         }
         checkGame.printResult();
     }
 
     public void playCompVsComp (String player1, String player2) {
         field.drawMatrix();
+        ComputerPlayer computerPlayer1 = chooseDifficultyComputer(player1);
+        ComputerPlayer computerPlayer2 = chooseDifficultyComputer(player2);
+
         while (checkGame.gameNotFinish) {
-            player.play("X","O", player1);
+            computerPlayer1.play("X","O");
             checkGame.stateGame();
-            if (checkGame.gameNotFinish) player.play("O","X", player2);
+            if (checkGame.gameNotFinish) computerPlayer2.play("O","X");
             checkGame.stateGame();
         }
         checkGame.printResult();
     }
 
-    public void chooseDifficulty (String difficulty) {
+    public ComputerPlayer chooseDifficultyComputer(String difficulty) {
         if (difficulty.equals("easy")) {
-
+            return new ComputerPlayerEasy(field);
         } else if (difficulty.equals("medium")) {
-            
+            return new ComputerPlayerMedium(field);
         } else {
-
+            return new ComputerPlayerHard(field);
         }
     }
 

@@ -8,8 +8,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Field field = new Field();
         CheckGame checkGame = new CheckGame(field);
-        ComputerPlayer player = new ComputerPlayer(field);
-        PlayGame play = new PlayGame(field, checkGame, player);
+        PlayGame play = new PlayGame(field, checkGame);
 
         String line;
         String[] commands;
